@@ -1,0 +1,1 @@
+// TypeScript interfaces (User, Grade, etc.)
