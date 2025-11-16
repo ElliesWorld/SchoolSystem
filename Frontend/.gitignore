@@ -6,9 +6,9 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+schoolsystem-.json/
 schoolsystem-.json
-schoolsystem-.json
-
+node_modules/
 .env
 *.env
 *serviceaccount*.json
@@ -19,7 +19,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Runtime data
 pids
-*.pid
+*.pid   
 *.seed
 *.pid.lock
 
