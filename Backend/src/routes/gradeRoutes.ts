@@ -11,7 +11,7 @@ import { requireAuth, requireAdmin } from "../middleware/authMiddleware";
 
 const router = Router();
 
-// ----------------- STUDENT: GET /api/me/grades -----------------
+//STUDENT: GET /api/me/grades
 
 const gradesQuerySchema = z.object({
   year: z
@@ -50,7 +50,7 @@ router.get(
   }
 );
 
-// ----------------- ADMIN: /api/admin/grades -----------------
+//ADMIN: /api/admin/gradeshttps://github.com/ElliesWorld/SchoolSystem.git
 
 const adminGradesQuerySchema = z.object({
   year: z

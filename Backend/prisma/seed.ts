@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   // Match this email to your Firebase test user!
   const email = "anna@example.com";
-  const firebaseUid = "demo-firebase-uid"; // or real UID later
+  const firebaseUid = "demo-firebase-uid";
 
   const user = await prisma.user.upsert({
     where: { email },
