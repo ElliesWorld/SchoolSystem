@@ -6,6 +6,14 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+schoolsystem-.json
+schoolsystem-.json
+
+.env
+*.env
+*serviceaccount*.json
+*schoolsystem*.json
+
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
