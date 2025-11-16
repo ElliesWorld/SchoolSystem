@@ -29,7 +29,6 @@ export function requireAuth(req: Request, _res: Response, next: NextFunction) {
 /**
  * requireAdmin – demo implementation
  * Always attaches a demo ADMIN user and never returns 401/403.
- * (You can tighten this later if you want real admin checks.)
  */
 export function requireAdmin(req: Request, _res: Response, next: NextFunction) {
   const demoAdmin: AuthUser = {

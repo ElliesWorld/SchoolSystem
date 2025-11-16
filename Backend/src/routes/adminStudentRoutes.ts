@@ -10,7 +10,7 @@ import { prisma } from "../utils/prisma";
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
-// ---- GET /api/admin/students?year=1 ----
+//GET /api/admin/students?year=1
 
 const studentsQuerySchema = z.object({
   year: z
@@ -45,7 +45,7 @@ router.get(
   }
 );
 
-// ---- CSV import: POST /api/admin/students/import-csv ----
+//CSV import: POST /api/admin/students/import-csv -
 
 router.post(
   "/admin/students/import-csv",
