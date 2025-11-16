@@ -1,35 +1,27 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// src/App.tsx
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import LoginPage from "./pages/loginpage";
+import GradesPage from "./pages/gradespage";
+import AdminPage from "./pages/adminpage";
+import AdminRegisterGradesPage from "./pages/adminregistergrades";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+const App: React.FC = () => {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <BrowserRouter>
+      <Routes>
+        <Route path="/loginpage" element={<LoginPage />} />
+        <Route path="/grades" element={<GradesPage />} />
+        <Route path="/admin" element={<AdminPage />} />
+        <Route
+          path="/adminregistergrades"
+          element={<AdminRegisterGradesPage />}
+        />
+        {/* default route */}
+        <Route path="*" element={<Navigate to="/loginpage" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
-export default App
+export default App;

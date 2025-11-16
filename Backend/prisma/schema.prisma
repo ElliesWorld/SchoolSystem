@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum LetterGrade {
+  A
+  B
+  C
+  D
+  E
+  F
+}
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  firebaseUid String?  @unique
+  role        Role     @default(STUDENT)
+  student     Student?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Student {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  personNr  String?  @map("personnr")
+  phoneNr   String?  @map("tel")
+  address   String?  @map("adress")
+  year      Int
+  grades    Grade[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([year])
+  @@map("students")
+}
+
+model Course {
+  id          String  @id @default(uuid())
+  name        String
+  subject     String
+  yearOffered Int
+  grades      Grade[]
+
+  @@index([yearOffered])
+  @@index([subject])
+}
+
+model Grade {
+  id        String      @id @default(uuid())
+  studentId String
+  courseId  String
+  student   Student     @relation(fields: [studentId], references: [id])
+  course    Course      @relation(fields: [courseId], references: [id])
+  grade     LetterGrade
+  year      Int
+  date      DateTime    @default(now())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([studentId, courseId], name: "studentId_courseId") // <- add name
+  @@index([year])
+  @@map("grades")
+}
