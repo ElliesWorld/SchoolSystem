@@ -1,0 +1,48 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [ main, actions ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Backend dependencies
+      working-directory: ./Backend
+      run: npm install
+
+    - name: Run Backend tests
+      working-directory: ./Backend
+      run: npm test
+
+  test-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Frontend dependencies
+      working-directory: ./Frontend
+      run: npm install
+
+    - name: Run Frontend tests
+      working-directory: ./Frontend
+      run: npm test
