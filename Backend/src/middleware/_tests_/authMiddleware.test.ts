@@ -37,7 +37,7 @@ describe("requireAuth", () => {
     // Assert it set a demo user
     const user = (req as any).user;
     expect(user).toBeDefined();
-    expect(user.email).toBe("anna@example.com");
+    expect(user.email).toBe("student@example.com");
     expect(user.role).toBe("STUDENT");
   });
 });
