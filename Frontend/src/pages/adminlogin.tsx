@@ -1,107 +1,90 @@
+// src/pages/adminlogin.tsx
 import React, { useState } from "react";
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  sendPasswordResetEmail,
-} from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { auth, googleProvider } from "../firebase";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth"; // 👈 added signOut
+import { auth } from "../firebase";
 
-const LoginPage: React.FC = () => {
+//only these emails are allowed to use the admin login
+const ALLOWED_ADMIN_EMAILS = [
+  "peshmay@gmail.com",         // put your real admin email(s) here
+  // "second.admin@example.com",
+];
+
+const AdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  async function handleLoginEmail(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
       const cred = await signInWithEmailAndPassword(auth, email, password);
+      const userEmail = (cred.user.email ?? email).toLowerCase();
+
+      // ❗ check if this email is allowed for admin
+      if (!ALLOWED_ADMIN_EMAILS.map((e) => e.toLowerCase()).includes(userEmail)) {
+        await signOut(auth); // immediately sign out
+        setLoading(false);
+        setError("You are not allowed to log in as admin.");
+        return;
+      }
+
       const idToken = await cred.user.getIdToken();
-      const userEmail = cred.user.email ?? email;
 
       const storage = rememberMe ? localStorage : sessionStorage;
       storage.setItem("idToken", idToken);
       storage.setItem("userEmail", userEmail);
 
-      // Student always goes to grades
-      navigate("/grades");
-    } catch (err: unknown) {
-      console.error(err);
-      setError(err instanceof Error ? err.message : "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleLoginGoogle() {
-    setError(null);
-    setLoading(true);
-
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const idToken = await result.user.getIdToken();
-      const userEmail = result.user.email ?? "";
-
-      const storage = rememberMe ? localStorage : sessionStorage;
-      storage.setItem("idToken", idToken);
-      storage.setItem("userEmail", userEmail);
-
-      navigate("/grades");
-    } catch (err: unknown) {
-      console.error(err);
-      setError(err instanceof Error ? err.message : "Google login failed");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleForgotPassword() {
-    if (!email) {
-      setError("Enter your email first, then click Forgot password.");
-      return;
-    }
-    try {
-      await sendPasswordResetEmail(auth, email);
-      alert("Password reset email sent.");
+      // go to admin dashboard page
+      navigate("/admin");
     } catch (err: unknown) {
       console.error(err);
       setError(
-        err instanceof Error ? err.message : "Failed to send reset email"
+        err instanceof Error
+          ? err.message
+          : "Admin login failed. Please check your email and password."
       );
+    } finally {
+      setLoading(false);
     }
+  }
+
+  function handleForgotPassword(e: React.MouseEvent) {
+    e.preventDefault();
+    alert("Admin password reset is not implemented in this demo.");
   }
 
   return (
     <div
       style={{
         minHeight: "100vh",
+        background: "#f4f4f4",
         display: "flex",
-        justifyContent: "center",
         alignItems: "center",
-        background: "#f5f5f5",
+        justifyContent: "center",
         fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
       }}
     >
       <div
         style={{
-          width: "100%",
-          maxWidth: 480,
+          width: 480,
+          maxWidth: "90%",
           background: "#fff",
-          padding: "2.5rem 3rem",
           borderRadius: 16,
           boxShadow: "0 22px 60px rgba(15,15,15,0.15)",
+          padding: "2.5rem 3rem",
         }}
       >
-        <h1 style={{ marginBottom: 8, fontSize: "1.8rem" }}>School System</h1>
-        <p style={{ marginBottom: 20, color: "#555" }}>
-          Login to view grades.
+        <h1 style={{ fontSize: "1.8rem", marginBottom: 4 }}>Admin Login</h1>
+        <p style={{ marginBottom: 24, color: "#555" }}>
+          Log in to manage students and grades.
         </p>
 
         {error && (
@@ -119,7 +102,7 @@ const LoginPage: React.FC = () => {
           </div>
         )}
 
-        <form onSubmit={handleLoginEmail}>
+        <form onSubmit={handleSubmit}>
           <label
             style={{
               display: "block",
@@ -173,9 +156,9 @@ const LoginPage: React.FC = () => {
           <div
             style={{
               display: "flex",
-              justifyContent: "space-between",
               alignItems: "center",
-              marginBottom: 12,
+              justifyContent: "space-between",
+              marginBottom: 16,
               fontSize: 13,
             }}
           >
@@ -196,8 +179,8 @@ const LoginPage: React.FC = () => {
                 background: "none",
                 color: "#0070f3",
                 cursor: "pointer",
-                padding: 0,
                 fontSize: 13,
+                padding: 0,
               }}
             >
               Forgot password?
@@ -218,54 +201,32 @@ const LoginPage: React.FC = () => {
               fontSize: 15,
               cursor: loading ? "default" : "pointer",
               opacity: loading ? 0.7 : 1,
-              marginBottom: 10,
+              marginBottom: 16,
             }}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
-
-          <button
-            type="button"
-            onClick={handleLoginGoogle}
-            disabled={loading}
-            style={{
-              width: "100%",
-              padding: "0.65rem",
-              borderRadius: 999,
-              border: "1px solid #ccc",
-              background: "#fff",
-              color: "#333",
-              fontWeight: 500,
-              fontSize: 14,
-              cursor: loading ? "default" : "pointer",
-            }}
-          >
-            {loading ? "Logging in..." : "Login with Google"}
-          </button>
         </form>
 
-        {/* Bottom row with admin link */}
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: 16,
+            marginTop: 8,
             fontSize: 13,
+            textAlign: "right",
           }}
         >
-          <span>Are you an admin?</span>
           <button
             type="button"
-            onClick={() => navigate("/adminlogin")}
+            onClick={() => navigate("/loginpage")}
             style={{
               border: "none",
               background: "none",
               cursor: "pointer",
-              color: "#333",
               fontSize: 13,
+              color: "#0070f3",
             }}
           >
-            ADMIN
+            Back to student login
           </button>
         </div>
       </div>
@@ -273,4 +234,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default AdminLoginPage;
