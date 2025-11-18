@@ -10,6 +10,9 @@ jobs:
   test-backend:
     runs-on: ubuntu-latest
 
+    env:
+      PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1  # ← Add this
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -18,8 +21,6 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-        cache: 'npm'
-        cache-dependency-path: Backend/package-lock.json
 
     - name: Install dependencies
       working-directory: ./Backend
@@ -44,8 +45,6 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-        cache: 'npm'
-        cache-dependency-path: Frontend/package-lock.json
 
     - name: Install dependencies
       working-directory: ./Frontend
