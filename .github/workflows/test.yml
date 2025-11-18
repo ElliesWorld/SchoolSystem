@@ -1,0 +1,50 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [ main, 10-actions ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      working-directory: ./Backend
+      run: npm ci
+
+    - name: Run tests
+      working-directory: ./Backend
+      run: npm test
+      env:
+        NODE_ENV: test
+
+  test-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      working-directory: ./Frontend
+      run: npm ci
+
+    - name: Run linter
+      working-directory: ./Frontend
+      run: npm run lint
