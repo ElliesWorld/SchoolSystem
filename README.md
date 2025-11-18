@@ -1,3 +1,6 @@
+![Tests](https://github.com/ElliesWorld/SchoolSystem/actions/workflows/test.yml/badge.svg)
+![Backend Tests](https://img.shields.io/badge/backend-tests-passing)
+
 **Frontend**: React (Vite), TypeScript
 
 cd Frontend

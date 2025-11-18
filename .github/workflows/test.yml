@@ -2,7 +2,7 @@ name: Run Tests
 
 on:
   push:
-    branches: [ main, actions ]
+    branches: [ main, 10-actions ]
   pull_request:
     branches: [ main ]
 
@@ -12,18 +12,24 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: Backend/package-lock.json
 
-    - name: Install Backend dependencies
+    - name: Install dependencies
       working-directory: ./Backend
-      run: npm install
+      run: npm ci
 
-    - name: Run Backend tests
+    - name: Generate Prisma Client
+      working-directory: ./Backend
+      run: npx prisma generate
+
+    - name: Run tests
       working-directory: ./Backend
       run: npm test
 
@@ -32,17 +38,19 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: Frontend/package-lock.json
 
-    - name: Install Frontend dependencies
+    - name: Install dependencies
       working-directory: ./Frontend
-      run: npm install
+      run: npm ci
 
-    - name: Run Frontend tests
+    - name: Run linter
       working-directory: ./Frontend
-      run: npm test
+      run: npm run lint
