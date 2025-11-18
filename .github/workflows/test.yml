@@ -23,15 +23,13 @@ jobs:
       working-directory: ./Backend
       run: npm ci
 
-    - name: Generate Prisma Client
-      working-directory: ./Backend
-      run: npx prisma generate
-      env:
-        PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: "1" 
+    # REMOVED: Generate Prisma Client step
 
     - name: Run tests
       working-directory: ./Backend
       run: npm test
+      env:
+        NODE_ENV: test
 
   test-frontend:
     runs-on: ubuntu-latest
