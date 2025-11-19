@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,41 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  STUDENT
-  ADMIN
-}
-
-enum LetterGrade {
-  A
-  B
-  C
-  D
-  E
-  F
-}
-
 model User {
   id          String   @id @default(uuid())
   email       String   @unique
   firebaseUid String?  @unique
   role        Role     @default(STUDENT)
-  student     Student?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  student     Student?
 }
 
 model Student {
   id        String   @id @default(uuid())
   userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
   personNr  String?  @map("personnr")
   phoneNr   String?  @map("tel")
   address   String?  @map("adress")
   year      Int
-  grades    Grade[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  grades    Grade[]
+  user      User     @relation(fields: [userId], references: [id])
 
   @@index([year])
   @@map("students")
@@ -68,15 +48,29 @@ model Grade {
   id        String      @id @default(uuid())
   studentId String
   courseId  String
-  student   Student     @relation(fields: [studentId], references: [id])
-  course    Course      @relation(fields: [courseId], references: [id])
   grade     LetterGrade
   year      Int
   date      DateTime    @default(now())
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
+  course    Course      @relation(fields: [courseId], references: [id])
+  student   Student     @relation(fields: [studentId], references: [id])
 
-  @@unique([studentId, courseId], name: "studentId_courseId") // <- add name
+  @@unique([studentId, courseId], name: "studentId_courseId")
   @@index([year])
   @@map("grades")
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum LetterGrade {
+  A
+  B
+  C
+  D
+  E
+  F
 }

@@ -1,6 +1,6 @@
 // src/routes/adminStudentRoutes.ts
 import { Router } from "express";
-import multer from "multer";
+import multer from "multer"; // Config for Excel files
 import { parse } from "csv-parse/sync";
 import { z } from "zod";
 import { requireAuth, requireAdmin } from "../middleware/authMiddleware";
