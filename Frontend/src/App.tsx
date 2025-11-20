@@ -5,7 +5,7 @@ import GradesPage from "./pages/gradespage";
 import AdminPage from "./pages/adminpage";
 import AdminRegisterGradesPage from "./pages/adminregistergrades";
 import AdminLoginPage from "./pages/adminlogin";
-import AdminMenuPage from "./pages/adminmenu";   //new import
+import AdminMenuPage from "./pages/adminmenu"; 
 
 const App: React.FC = () => {
   return (
@@ -14,13 +14,13 @@ const App: React.FC = () => {
         <Route path="/loginpage" element={<LoginPage />} />
         <Route path="/grades" element={<GradesPage />} />
 
-        {/* admin-login screen */}
+        {/* Admin-login screen */}
         <Route path="/adminlogin" element={<AdminLoginPage />} />
 
-        {/* NEW: Admin menu page (wireframe with two big buttons) */}
+        {/* Admin menu page (wireframe with two buttons) */}
         <Route path="/adminmenu" element={<AdminMenuPage />} />
 
-        {/* existing admin pages stay the same */}
+        {/* Admin pages */}
         <Route path="/admin" element={<AdminPage />} />
         <Route
           path="/adminregistergrades"

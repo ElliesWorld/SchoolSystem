@@ -41,9 +41,9 @@ const AdminRegisterGradesPage: React.FC = () => {
   useEffect(() => {
     // Hardcoded example; adjust to your real courses
     const mock: Course[] = [
-      { id: "course-1", name: "Engelska 5", subject: "English", yearOffered: 1 },
-      { id: "course-2", name: "Filosofi 1", subject: "Philosophy", yearOffered: 1 },
-      { id: "course-3", name: "Engelska 6", subject: "English", yearOffered: 2 },
+      { id: "course-1", name: "English 5", subject: "English", yearOffered: 1 },
+      { id: "course-2", name: "Philosophy 1", subject: "Philosophy", yearOffered: 1 },
+      { id: "course-3", name: "English 6", subject: "English", yearOffered: 2 },
     ];
     setCourses(mock);
   }, []);

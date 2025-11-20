@@ -2,7 +2,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
-//Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAuTnMixu0cnU_tScJdQlS_RKjwFzkewIw",
   authDomain: "schoolsystem-eac50.firebaseapp.com",
@@ -14,6 +13,5 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// Named exports used everywhere
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
