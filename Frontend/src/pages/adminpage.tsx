@@ -143,7 +143,7 @@ async function fetchStudents(year: 1 | 2 | 3 | "all" = "all") {
       >
         <div>
           <button
-            onClick={() => navigate("/loginpage")}
+            onClick={() => navigate("/adminmenu")}
             style={{
               border: "none",
               background: "none",
@@ -151,7 +151,7 @@ async function fetchStudents(year: 1 | 2 | 3 | "all" = "all") {
               cursor: "pointer",
               marginRight: 8,
             }}
-            title="Back to login"
+            title="Back to admin menu"
           >
             ←
           </button>
