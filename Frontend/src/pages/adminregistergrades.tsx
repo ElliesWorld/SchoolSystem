@@ -148,7 +148,7 @@ const AdminRegisterGradesPage: React.FC = () => {
       >
         <div>
           <button
-            onClick={() => navigate("/admin")}
+            onClick={() => navigate("/adminmenu")}
             style={{
               border: "none",
               background: "none",

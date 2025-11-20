@@ -43,7 +43,7 @@ const AdminLoginPage: React.FC = () => {
       storage.setItem("userEmail", userEmail);
 
       // go to admin dashboard page
-      navigate("/admin");
+      navigate("/adminmenu");
     } catch (err: unknown) {
       console.error(err);
       setError(
