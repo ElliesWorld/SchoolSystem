@@ -1,12 +1,11 @@
 // src/pages/adminlogin.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth"; // 👈 added signOut
+import { signInWithEmailAndPassword, signOut } from "firebase/auth"; 
 import { auth } from "../firebase";
 
-//only these emails are allowed to use the admin login
 const ALLOWED_ADMIN_EMAILS = [
-  "peshmay@gmail.com",         // put your real admin email(s) here
+  "peshmay@gmail.com",         // put your admin email(s) here
   // "second.admin@example.com",
 ];
 
@@ -28,7 +27,7 @@ const AdminLoginPage: React.FC = () => {
       const cred = await signInWithEmailAndPassword(auth, email, password);
       const userEmail = (cred.user.email ?? email).toLowerCase();
 
-      // ❗ check if this email is allowed for admin
+      // check if this email is allowed for admin
       if (!ALLOWED_ADMIN_EMAILS.map((e) => e.toLowerCase()).includes(userEmail)) {
         await signOut(auth); // immediately sign out
         setLoading(false);

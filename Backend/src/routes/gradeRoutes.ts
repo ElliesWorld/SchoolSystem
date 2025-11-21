@@ -11,6 +11,33 @@ import { requireAuth, requireAdmin } from "../middleware/authMiddleware";
 
 const router = Router();
 
+/**
+ * @swagger
+ * /api/me/grades:
+ *   get:
+ *     summary: Retrieve my grades
+ *     description: Retrieve a list of grades for the logged-in student
+ *     responses:
+ *       200:
+ *         description: A list of grades
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 grades:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       grade:
+ *                         type: string
+ *                       year:
+ *                         type: integer
+ */
+
 //STUDENT: GET /api/me/grades
 
 const gradesQuerySchema = z.object({
