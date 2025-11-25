@@ -1,11 +1,14 @@
 // src/pages/adminlogin.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth"; 
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "../firebase";
 
+// import your background image
+import schoolBg from "../assets/images/school-bg.webp";
+
 const ALLOWED_ADMIN_EMAILS = [
-  "peshmay@gmail.com",         // put your admin email(s) here
+  "peshmay@gmail.com",
   // "second.admin@example.com",
 ];
 
@@ -64,37 +67,54 @@ const AdminLoginPage: React.FC = () => {
     <div
       style={{
         minHeight: "100vh",
-        background: "#f4f4f4",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        // ⬇️ Same background style as student login
+        backgroundImage: `linear-gradient(rgba(10, 25, 47, 0.85), rgba(10, 25, 47, 0.9)), url(${schoolBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        padding: "2rem",
         fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
       }}
     >
       <div
         style={{
-          width: 480,
-          maxWidth: "90%",
-          background: "#fff",
-          borderRadius: 16,
-          boxShadow: "0 22px 60px rgba(15,15,15,0.15)",
+          width: "100%",
+          maxWidth: 480,
+          background: "rgba(255, 255, 255, 0.98)",
+          borderRadius: 18,
+          boxShadow: "0 24px 80px rgba(0, 0, 0, 0.35)",
           padding: "2.5rem 3rem",
+          border: "1px solid rgba(255,255,255,0.8)",
+          backdropFilter: "blur(12px)",
         }}
       >
-        <h1 style={{ fontSize: "1.8rem", marginBottom: 4 }}>Admin Login</h1>
-        <p style={{ marginBottom: 24, color: "#555" }}>
+        <h1
+          style={{
+            fontSize: "1.9rem",
+            marginBottom: 4,
+            fontWeight: 700,
+            color: "#111827",
+          }}
+        >
+          Admin Login
+        </h1>
+        <p style={{ marginBottom: 24, color: "#4b5563", fontSize: 14 }}>
           Log in to manage students and grades.
         </p>
 
         {error && (
           <div
             style={{
-              marginBottom: 12,
-              padding: "0.5rem 0.75rem",
-              borderRadius: 6,
-              background: "#ffe5e5",
-              color: "#a30000",
+              marginBottom: 14,
+              padding: "0.6rem 0.85rem",
+              borderRadius: 8,
+              background: "#fef2f2",
+              color: "#b91c1c",
               fontSize: 13,
+              border: "1px solid #fecaca",
             }}
           >
             {error}
@@ -107,10 +127,11 @@ const AdminLoginPage: React.FC = () => {
               display: "block",
               fontSize: 13,
               marginBottom: 4,
-              fontWeight: 500,
+              fontWeight: 600,
+              color: "#374151",
             }}
           >
-            E-mail
+            📧 E-mail
           </label>
           <input
             type="email"
@@ -119,11 +140,22 @@ const AdminLoginPage: React.FC = () => {
             onChange={(e) => setEmail(e.target.value)}
             style={{
               width: "100%",
-              padding: "0.55rem 0.75rem",
-              borderRadius: 8,
-              border: "1px solid #ddd",
+              padding: "0.65rem 0.85rem",
+              borderRadius: 10,
+              border: "1px solid #e5e7eb",
               marginBottom: 16,
               fontSize: 14,
+              outline: "none",
+              transition: "box-shadow 0.15s ease, border-color 0.15s ease",
+              boxShadow: "0 1px 2px rgba(15,23,42,0.04)",
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = "#2563eb";
+              e.target.style.boxShadow = "0 0 0 1px rgba(37,99,235,0.25)";
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = "#e5e7eb";
+              e.target.style.boxShadow = "0 1px 2px rgba(15,23,42,0.04)";
             }}
           />
 
@@ -132,10 +164,11 @@ const AdminLoginPage: React.FC = () => {
               display: "block",
               fontSize: 13,
               marginBottom: 4,
-              fontWeight: 500,
+              fontWeight: 600,
+              color: "#374151",
             }}
           >
-            Password
+            🔒 Password
           </label>
           <input
             type="password"
@@ -144,11 +177,22 @@ const AdminLoginPage: React.FC = () => {
             onChange={(e) => setPassword(e.target.value)}
             style={{
               width: "100%",
-              padding: "0.55rem 0.75rem",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              marginBottom: 8,
+              padding: "0.65rem 0.85rem",
+              borderRadius: 10,
+              border: "1px solid #e5e7eb",
+              marginBottom: 10,
               fontSize: 14,
+              outline: "none",
+              transition: "box-shadow 0.15s ease, border-color 0.15s ease",
+              boxShadow: "0 1px 2px rgba(15,23,42,0.04)",
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = "#2563eb";
+              e.target.style.boxShadow = "0 0 0 1px rgba(37,99,235,0.25)";
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = "#e5e7eb";
+              e.target.style.boxShadow = "0 1px 2px rgba(15,23,42,0.04)";
             }}
           />
 
@@ -159,6 +203,7 @@ const AdminLoginPage: React.FC = () => {
               justifyContent: "space-between",
               marginBottom: 16,
               fontSize: 13,
+              color: "#4b5563",
             }}
           >
             <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -166,6 +211,7 @@ const AdminLoginPage: React.FC = () => {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
+                style={{ cursor: "pointer" }}
               />
               <span>Remember me</span>
             </label>
@@ -176,10 +222,11 @@ const AdminLoginPage: React.FC = () => {
               style={{
                 border: "none",
                 background: "none",
-                color: "#0070f3",
+                color: "#2563eb",
                 cursor: "pointer",
                 fontSize: 13,
                 padding: 0,
+                fontWeight: 500,
               }}
             >
               Forgot password?
@@ -191,16 +238,32 @@ const AdminLoginPage: React.FC = () => {
             disabled={loading}
             style={{
               width: "100%",
-              padding: "0.65rem",
+              padding: "0.7rem",
               borderRadius: 999,
               border: "none",
-              background: "#0070f3",
+              background: loading
+                ? "linear-gradient(135deg, #60a5fa, #4f46e5)"
+                : "linear-gradient(135deg, #2563eb, #4f46e5)",
               color: "#fff",
               fontWeight: 600,
               fontSize: 15,
               cursor: loading ? "default" : "pointer",
-              opacity: loading ? 0.7 : 1,
-              marginBottom: 16,
+              opacity: loading ? 0.8 : 1,
+              marginBottom: 12,
+              boxShadow: "0 12px 28px rgba(37, 99, 235, 0.35)",
+              transition: "transform 0.1s ease, box-shadow 0.1s ease",
+            }}
+            onMouseDown={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.transform =
+                "translateY(1px)";
+              (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                "0 6px 16px rgba(37, 99, 235, 0.35)";
+            }}
+            onMouseUp={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.transform =
+                "translateY(0)";
+              (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                "0 12px 28px rgba(37, 99, 235, 0.35)";
             }}
           >
             {loading ? "Logging in..." : "Login"}
@@ -209,9 +272,11 @@ const AdminLoginPage: React.FC = () => {
 
         <div
           style={{
-            marginTop: 8,
+            marginTop: 10,
             fontSize: 13,
             textAlign: "right",
+            borderTop: "1px solid #e5e7eb",
+            paddingTop: 10,
           }}
         >
           <button
@@ -222,7 +287,8 @@ const AdminLoginPage: React.FC = () => {
               background: "none",
               cursor: "pointer",
               fontSize: 13,
-              color: "#0070f3",
+              color: "#2563eb",
+              fontWeight: 500,
             }}
           >
             Back to student login

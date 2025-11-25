@@ -82,9 +82,9 @@ router.get(
 const adminGradesQuerySchema = z.object({
   year: z
     .string()
-    .transform((v) => Number(v))
-    .optional(),
-  courseId: z.string().uuid(),
+    .regex(/^[1-3]$/, "Year must be 1, 2, or 3")
+    .transform((v) => Number(v)),
+  courseId: z.string(), // accept "course-1" etc.
 });
 
 router.get(
@@ -95,8 +95,8 @@ router.get(
   async (req, res, next) => {
     try {
       const { year, courseId } = (req as any).validatedQuery ?? {};
-      const yearNum = Number(year);
-      const rows = await getRegisterGradesView(yearNum, courseId);
+      // year is already a number because of .transform
+      const rows = await getRegisterGradesView(year, courseId);
       res.json({ rows });
     } catch (err) {
       next(err);
@@ -105,8 +105,8 @@ router.get(
 );
 
 const adminGradesBodySchema = z.object({
-  studentId: z.string().uuid(),
-  courseId: z.string().uuid(),
+  studentId: z.string(),
+  courseId: z.string(),
   grade: z.enum(["A", "B", "C", "D", "E", "F"]),
   year: z.number().int().min(1).max(3),
 });

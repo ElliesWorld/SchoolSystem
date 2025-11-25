@@ -7,6 +7,12 @@ import {
 import { useNavigate } from "react-router-dom";
 import { auth, googleProvider } from "../firebase";
 
+// NEW: google icon
+import { FcGoogle } from "react-icons/fc";
+
+// ⬇️ NEW: import your background image
+import schoolBg from "../assets/images/school-bg.webp";
+
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
@@ -85,7 +91,12 @@ const LoginPage: React.FC = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "#f5f5f5",
+        // ⬇️ Background image + dark overlay
+        backgroundImage: `linear-gradient(rgba(10, 25, 47, 0.85), rgba(10, 25, 47, 0.9)), url(${schoolBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        padding: "2rem",
         fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
       }}
     >
@@ -93,26 +104,40 @@ const LoginPage: React.FC = () => {
         style={{
           width: "100%",
           maxWidth: 480,
-          background: "#fff",
+          background: "rgba(255, 255, 255, 0.98)",
           padding: "2.5rem 3rem",
-          borderRadius: 16,
-          boxShadow: "0 22px 60px rgba(15,15,15,0.15)",
+          borderRadius: 18,
+          boxShadow: "0 24px 80px rgba(0, 0, 0, 0.35)",
+          border: "1px solid rgba(255,255,255,0.8)",
+          backdropFilter: "blur(12px)",
         }}
       >
-        <h1 style={{ marginBottom: 8, fontSize: "1.8rem" }}>School System</h1>
-        <p style={{ marginBottom: 20, color: "#555" }}>
-          Login to view grades.
-        </p>
+        <div style={{ marginBottom: 24 }}>
+          <h1
+            style={{
+              marginBottom: 4,
+              fontSize: "1.9rem",
+              fontWeight: 700,
+              color: "#111827",
+            }}
+          >
+            School System
+          </h1>
+          <p style={{ marginBottom: 0, color: "#4b5563", fontSize: 14 }}>
+            Login to view grades and class information.
+          </p>
+        </div>
 
         {error && (
           <div
             style={{
-              marginBottom: 12,
-              padding: "0.5rem 0.75rem",
-              borderRadius: 6,
-              background: "#ffe5e5",
-              color: "#a30000",
+              marginBottom: 14,
+              padding: "0.6rem 0.85rem",
+              borderRadius: 8,
+              background: "#fef2f2",
+              color: "#b91c1c",
               fontSize: 13,
+              border: "1px solid #fecaca",
             }}
           >
             {error}
@@ -125,10 +150,12 @@ const LoginPage: React.FC = () => {
               display: "block",
               fontSize: 13,
               marginBottom: 4,
-              fontWeight: 500,
+              fontWeight: 600,
+              color: "#374151",
             }}
           >
-            E-mail
+            {/* small icon via emoji, no extra imports */}
+            📧 E-mail
           </label>
           <input
             type="email"
@@ -137,11 +164,22 @@ const LoginPage: React.FC = () => {
             onChange={(e) => setEmail(e.target.value)}
             style={{
               width: "100%",
-              padding: "0.55rem 0.75rem",
-              borderRadius: 8,
-              border: "1px solid #ddd",
+              padding: "0.65rem 0.85rem",
+              borderRadius: 10,
+              border: "1px solid #e5e7eb",
               marginBottom: 16,
               fontSize: 14,
+              outline: "none",
+              transition: "box-shadow 0.15s ease, border-color 0.15s ease",
+              boxShadow: "0 1px 2px rgba(15,23,42,0.04)",
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = "#2563eb";
+              e.target.style.boxShadow = "0 0 0 1px rgba(37,99,235,0.25)";
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = "#e5e7eb";
+              e.target.style.boxShadow = "0 1px 2px rgba(15,23,42,0.04)";
             }}
           />
 
@@ -150,10 +188,11 @@ const LoginPage: React.FC = () => {
               display: "block",
               fontSize: 13,
               marginBottom: 4,
-              fontWeight: 500,
+              fontWeight: 600,
+              color: "#374151",
             }}
           >
-            Password
+            🔒 Password
           </label>
           <input
             type="password"
@@ -162,11 +201,22 @@ const LoginPage: React.FC = () => {
             onChange={(e) => setPassword(e.target.value)}
             style={{
               width: "100%",
-              padding: "0.55rem 0.75rem",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              marginBottom: 8,
+              padding: "0.65rem 0.85rem",
+              borderRadius: 10,
+              border: "1px solid #e5e7eb",
+              marginBottom: 10,
               fontSize: 14,
+              outline: "none",
+              transition: "box-shadow 0.15s ease, border-color 0.15s ease",
+              boxShadow: "0 1px 2px rgba(15,23,42,0.04)",
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = "#2563eb";
+              e.target.style.boxShadow = "0 0 0 1px rgba(37,99,235,0.25)";
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = "#e5e7eb";
+              e.target.style.boxShadow = "0 1px 2px rgba(15,23,42,0.04)";
             }}
           />
 
@@ -175,8 +225,9 @@ const LoginPage: React.FC = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginBottom: 12,
+              marginBottom: 14,
               fontSize: 13,
+              color: "#4b5563",
             }}
           >
             <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -184,6 +235,7 @@ const LoginPage: React.FC = () => {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
+                style={{ cursor: "pointer" }}
               />
               <span>Remember me</span>
             </label>
@@ -194,10 +246,11 @@ const LoginPage: React.FC = () => {
               style={{
                 border: "none",
                 background: "none",
-                color: "#0070f3",
+                color: "#2563eb",
                 cursor: "pointer",
                 padding: 0,
                 fontSize: 13,
+                fontWeight: 500,
               }}
             >
               Forgot password?
@@ -209,38 +262,76 @@ const LoginPage: React.FC = () => {
             disabled={loading}
             style={{
               width: "100%",
-              padding: "0.65rem",
+              padding: "0.7rem",
               borderRadius: 999,
               border: "none",
-              background: "#0070f3",
+              background: loading
+                ? "linear-gradient(135deg, #60a5fa, #4f46e5)"
+                : "linear-gradient(135deg, #2563eb, #4f46e5)",
               color: "#fff",
               fontWeight: 600,
               fontSize: 15,
               cursor: loading ? "default" : "pointer",
-              opacity: loading ? 0.7 : 1,
+              opacity: loading ? 0.8 : 1,
               marginBottom: 10,
+              boxShadow: "0 12px 28px rgba(37, 99, 235, 0.35)",
+              transition: "transform 0.1s ease, box-shadow 0.1s ease",
+            }}
+            onMouseDown={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.transform =
+                "translateY(1px)";
+              (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                "0 6px 16px rgba(37, 99, 235, 0.35)";
+            }}
+            onMouseUp={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.transform =
+                "translateY(0)";
+              (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                "0 12px 28px rgba(37, 99, 235, 0.35)";
             }}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
 
+          {/* GOOGLE BUTTON – styled similar to your Tailwind example */}
           <button
             type="button"
             onClick={handleLoginGoogle}
             disabled={loading}
             style={{
               width: "100%",
-              padding: "0.65rem",
+              padding: "0.7rem",
               borderRadius: 999,
-              border: "1px solid #ccc",
-              background: "#fff",
-              color: "#333",
+              border: "1px solid #4b5563",
+              background: "#374151",
+              color: "#f9fafb",
               fontWeight: 500,
               fontSize: 14,
               cursor: loading ? "default" : "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              boxShadow: "0 2px 8px rgba(15,23,42,0.4)",
+              transition:
+                "background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease",
+              marginTop: 6,
+            }}
+            onMouseOver={(e) => {
+              if (loading) return;
+              e.currentTarget.style.background = "#4b5563";
+              e.currentTarget.style.boxShadow =
+                "0 4px 12px rgba(15,23,42,0.45)";
+            }}
+            onMouseOut={(e) => {
+              if (loading) return;
+              e.currentTarget.style.background = "#374151";
+              e.currentTarget.style.boxShadow =
+                "0 2px 8px rgba(15,23,42,0.4)";
             }}
           >
-            {loading ? "Logging in..." : "Login with Google"}
+            <FcGoogle style={{ width: 20, height: 20 }} />
+            <span>{loading ? "Logging in..." : "Continue with Google"}</span>
           </button>
         </form>
 
@@ -249,8 +340,11 @@ const LoginPage: React.FC = () => {
           style={{
             display: "flex",
             justifyContent: "space-between",
-            marginTop: 16,
+            marginTop: 20,
             fontSize: 13,
+            color: "#6b7280",
+            borderTop: "1px solid #e5e7eb",
+            paddingTop: 12,
           }}
         >
           <span>Are you an admin?</span>
@@ -261,8 +355,10 @@ const LoginPage: React.FC = () => {
               border: "none",
               background: "none",
               cursor: "pointer",
-              color: "#333",
+              color: "#f97316", // orange ADMIN text
               fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: 0.5,
             }}
           >
             ADMIN
