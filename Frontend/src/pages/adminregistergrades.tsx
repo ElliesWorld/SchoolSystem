@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
 
 type RegisterRow = {
   studentId: string;
@@ -24,7 +25,9 @@ type Course = {
 
 const AdminRegisterGradesPage: React.FC = () => {
   const navigate = useNavigate();
-  const storage = localStorage.getItem("idToken") ? localStorage : sessionStorage;
+  const storage = localStorage.getItem("idToken")
+    ? localStorage
+    : sessionStorage;
   const idToken = storage.getItem("idToken");
 
   const [year, setYear] = useState<1 | 2 | 3 | "all">("all");
@@ -36,17 +39,30 @@ const AdminRegisterGradesPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // TODO: Replace this with real API: GET /api/admin/courses
-  // For now, you can hard-code or fetch from backend when you create that endpoint.
+  // ✅ Fetch real courses from backend
   useEffect(() => {
-    // Hardcoded example; adjust to your real courses
-    const mock: Course[] = [
-      { id: "course-1", name: "English 5", subject: "English", yearOffered: 1 },
-      { id: "course-2", name: "Philosophy 1", subject: "Philosophy", yearOffered: 1 },
-      { id: "course-3", name: "English 6", subject: "English", yearOffered: 2 },
-    ];
-    setCourses(mock);
-  }, []);
+    async function fetchCourses() {
+      if (!idToken) return;
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/courses`, {
+          headers: { Authorization: `Bearer ${idToken}` },
+        });
+
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.error || "Failed to fetch courses");
+        }
+
+        const data = await res.json();
+        setCourses(data.courses);
+      } catch (err) {
+        console.error("Failed to load courses:", err);
+        setError("Failed to load courses");
+      }
+    }
+
+    fetchCourses();
+  }, [idToken]);
 
   async function loadRegister() {
     if (!idToken) {
@@ -136,17 +152,26 @@ const AdminRegisterGradesPage: React.FC = () => {
   );
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f4f4f4" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(#e0f2fe, #f9fafb)", // soft blue background
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Open Sans", sans-serif',
+      }}
+    >
       <header
         style={{
           display: "flex",
           justifyContent: "space-between",
+          alignItems: "center",
           padding: "1rem 2rem",
-          background: "#fff",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+          background: "#0f172a",
+          color: "#f9fafb",
+          boxShadow: "0 4px 12px rgba(15, 23, 42, 0.35)",
         }}
       >
-        <div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <button
             onClick={() => navigate("/adminmenu")}
             style={{
@@ -154,28 +179,44 @@ const AdminRegisterGradesPage: React.FC = () => {
               background: "none",
               fontSize: "1.3rem",
               cursor: "pointer",
-              marginRight: 8,
+              marginRight: 4,
+              color: "#e5e7eb",
             }}
-            title="Back to all students"
+            title="Back to admin menu"
           >
             ←
           </button>
-          <span style={{ fontSize: "1.3rem", fontWeight: 600 }}>
+          <span
+            style={{
+              fontSize: "1.4rem",
+              fontWeight: 700,
+              letterSpacing: 0.3,
+            }}
+          >
             Register Grades
           </span>
         </div>
       </header>
 
-      <main style={{ padding: "1.5rem 2rem" }}>
+      <main style={{ padding: "2.5rem 2rem" }}>
         {/* Filters */}
         <div
           style={{
+            margin: "0 auto 1.5rem",
+            maxWidth: 960,
+            background: "#ffffff",
+            borderRadius: 18,
+            padding: "1rem 1.25rem",
+            boxShadow: "0 10px 30px rgba(15,23,42,0.08)",
             display: "flex",
+            flexWrap: "wrap",
             gap: 16,
             alignItems: "center",
-            marginBottom: 16,
           }}
         >
+          <div style={{ fontSize: 13, fontWeight: 600, color: "#4b5563" }}>
+            Year:
+          </div>
           <div style={{ display: "flex", gap: 8 }}>
             {["all", 1, 2, 3].map((y) => (
               <button
@@ -184,13 +225,18 @@ const AdminRegisterGradesPage: React.FC = () => {
                   setYear(y === "all" ? "all" : (y as 1 | 2 | 3))
                 }
                 style={{
-                  padding: "0.25rem 0.7rem",
+                  padding: "0.3rem 0.9rem",
                   borderRadius: 999,
-                  border: "1px solid #ddd",
-                  background: year === y ? "#0070f3" : "transparent",
-                  color: year === y ? "#fff" : "#333",
+                  border:
+                    year === y ? "1px solid #0ea5e9" : "1px solid #e5e7eb",
+                  background: year === y ? "#0ea5e9" : "#ffffff",
+                  color: year === y ? "#ffffff" : "#111827",
                   fontSize: 12,
                   cursor: "pointer",
+                  boxShadow:
+                    year === y
+                      ? "0 6px 16px rgba(14, 165, 233, 0.35)"
+                      : "none",
                 }}
               >
                 {y === "all" ? "All" : `Year ${y}`}
@@ -198,14 +244,27 @@ const AdminRegisterGradesPage: React.FC = () => {
             ))}
           </div>
 
-          <div style={{ fontSize: 13 }}>
-            Subject:{" "}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              fontSize: 13,
+              color: "#4b5563",
+            }}
+          >
+            <span>Subject:</span>
             <select
               value={subject}
               onChange={(e) =>
                 setSubject(e.target.value === "" ? "" : e.target.value)
               }
-              style={{ padding: "0.25rem 0.5rem", borderRadius: 6 }}
+              style={{
+                padding: "0.3rem 0.6rem",
+                borderRadius: 8,
+                border: "1px solid #d1d5db",
+                fontSize: 13,
+              }}
             >
               <option value="">All</option>
               {availableSubjects.map((s) => (
@@ -216,14 +275,30 @@ const AdminRegisterGradesPage: React.FC = () => {
             </select>
           </div>
 
-          <div style={{ fontSize: 13 }}>
-            Course:{" "}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              fontSize: 13,
+              color: "#4b5563",
+            }}
+          >
+            <span>Course:</span>
             <select
               value={courseId}
               onChange={(e) => setCourseId(e.target.value)}
-              style={{ padding: "0.25rem 0.5rem", borderRadius: 6 }}
+              style={{
+                padding: "0.3rem 0.6rem",
+                borderRadius: 8,
+                border: "1px solid #d1d5db",
+                fontSize: 13,
+                minWidth: 180,
+              }}
             >
-              <option value="">Select course</option>
+              <option value="">
+                {subject ? "Select course" : "Select subject and course"}
+              </option>
               {filteredCourses.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name} ({c.subject}, Year {c.yearOffered})
@@ -234,7 +309,14 @@ const AdminRegisterGradesPage: React.FC = () => {
         </div>
 
         {error && (
-          <div style={{ marginBottom: 8, color: "#b00020", fontSize: 13 }}>
+          <div
+            style={{
+              margin: "0 auto 12px",
+              maxWidth: 960,
+              color: "#b91c1c",
+              fontSize: 13,
+            }}
+          >
             {error}
           </div>
         )}
@@ -242,18 +324,34 @@ const AdminRegisterGradesPage: React.FC = () => {
         {/* Register grades table */}
         <div
           style={{
-            background: "#fff",
-            padding: "1rem",
-            borderRadius: 12,
-            boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+            maxWidth: 960,
+            margin: "0 auto",
+            background: "#ffffff",
+            padding: "1.2rem 1.4rem",
+            borderRadius: 18,
+            boxShadow: "0 12px 32px rgba(15,23,42,0.12)",
           }}
         >
           {loading ? (
-            <p>Loading register…</p>
+            <p style={{ fontSize: 14 }}>Loading register…</p>
           ) : rows.length === 0 ? (
-            <p style={{ fontSize: 13, color: "#777" }}>
-              No rows to show. Choose year and course.
-            </p>
+            <div
+              style={{
+                padding: "1.5rem 1rem",
+                borderRadius: 16,
+                border: "1px dashed #cbd5f5",
+                background: "#f9fafb",
+                textAlign: "center",
+                fontSize: 13,
+                color: "#6b7280",
+              }}
+            >
+              <div style={{ fontSize: 22, marginBottom: 4 }}>📋</div>
+              <div style={{ fontWeight: 600, marginBottom: 4 }}>
+                No rows to show
+              </div>
+              <div>Choose a year and course to start registering grades.</div>
+            </div>
           ) : (
             <table
               style={{
@@ -263,15 +361,54 @@ const AdminRegisterGradesPage: React.FC = () => {
               }}
             >
               <thead>
-                <tr style={{ borderBottom: "1px solid #eee" }}>
-                  <th style={{ textAlign: "left", padding: 8 }}>Full name</th>
-                  <th style={{ textAlign: "left", padding: 8 }}>Grade</th>
-                  <th style={{ textAlign: "left", padding: 8 }}>Date</th>
+                <tr
+                  style={{
+                    borderBottom: "1px solid #e5e7eb",
+                    background: "#f1f5f9",
+                  }}
+                >
+                  <th
+                    style={{
+                      textAlign: "left",
+                      padding: 8,
+                      fontWeight: 600,
+                      color: "#111827",
+                    }}
+                  >
+                    Full name
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      padding: 8,
+                      fontWeight: 600,
+                      color: "#111827",
+                    }}
+                  >
+                    Grade
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      padding: 8,
+                      fontWeight: 600,
+                      color: "#111827",
+                    }}
+                  >
+                    Date
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row) => (
-                  <tr key={row.studentId} style={{ borderTop: "1px solid #f2f2f2" }}>
+                {rows.map((row, index) => (
+                  <tr
+                    key={row.studentId}
+                    style={{
+                      borderTop: "1px solid #f1f5f9",
+                      background:
+                        index % 2 === 0 ? "#ffffff" : "#f8fafc",
+                    }}
+                  >
                     <td style={{ padding: 8 }}>{row.name}</td>
                     <td style={{ padding: 8 }}>
                       <select
@@ -280,6 +417,12 @@ const AdminRegisterGradesPage: React.FC = () => {
                         onChange={(e) =>
                           saveGrade(row.studentId, e.target.value)
                         }
+                        style={{
+                          padding: "0.2rem 0.4rem",
+                          borderRadius: 6,
+                          border: "1px solid #d1d5db",
+                          fontSize: 13,
+                        }}
                       >
                         <option value="">(none)</option>
                         <option value="A">A</option>
@@ -291,7 +434,9 @@ const AdminRegisterGradesPage: React.FC = () => {
                       </select>
                     </td>
                     <td style={{ padding: 8 }}>
-                      {row.date ? new Date(row.date).toLocaleDateString() : ""}
+                      {row.date
+                        ? new Date(row.date).toLocaleDateString()
+                        : ""}
                     </td>
                   </tr>
                 ))}

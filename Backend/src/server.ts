@@ -5,6 +5,7 @@ import cors from "cors";
 import { env } from "./config/env";
 import gradeRoutes from "./routes/gradeRoutes";
 import adminStudentRoutes from "./routes/adminStudentRoutes";
+import courseRoutes from "./routes/courseRoutes"; //
 import { errorHandler } from "./middleware/errorHandler";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger";
@@ -35,7 +36,7 @@ app.get("/debug-me-grades", (_req, res) => {
 // API routes
 app.use("/api", gradeRoutes); // /api/me/grades, /api/admin/grades
 app.use("/api", adminStudentRoutes); // /api/admin/students, /import-csv, etc.
-
+app.use("/api", courseRoutes); // ✅ /api/admin/courses
 // Error handler
 app.use(errorHandler);
 
