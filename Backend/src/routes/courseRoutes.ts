@@ -21,10 +21,10 @@ router.get(
   "/admin/courses",
   requireAuth,
   requireAdmin,
-  (req, res, next) => {
-    console.log("🎯 /api/admin/courses hit by:", (req as any).user);
-    next();
-  },
+  //(req, res, next) => {
+  //  console.log("/api/admin/courses hit by:", (req as any).user);
+  //  next();
+  //},
   async (req, res, next) => {
     try {
       const courses = await prisma.course.findMany({
