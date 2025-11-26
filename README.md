@@ -1,92 +1,118 @@
+# School System
+
+A school management database for managing students, courses, and grades.
+
 ![Tests](https://github.com/ElliesWorld/SchoolSystem/actions/workflows/test.yml/badge.svg?branch=main)
 
-**Frontend**: React (Vite), TypeScript
+## Technologies Used
 
-cd Frontend
+**Frontend**: React, TypeScript, Vite
+**Backend**: Node.js, Express, TypeScript
+**Database**: PostgreSQL, Prisma ORM
+**Authentication**: Firebase
+**API Documentation**: Swagger
+
+---
+
+## Prerequisites
+
+- **Node.js** 
+- **PostgreSQL** 
+- **Firebase** 
+
+---
+
+## Installation
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/ElliesWorld/SchoolSystem.git
+cd SchoolSystem
+```
+
+### 2. Backend Setup
+```bash
+cd Backend
 npm install
+```
 
-Create Frontend/.env:
-VITE_API_BASE_URL="http://localhost:4000"
+Run Prisma migrations and seed the database:
+```bash
+npx prisma generate
+npx prisma migrate dev
+npx prisma db seed
+```
 
-# Firebase web config (from Firebase console)
+### 3. Frontend Setup
+```bash
+cd ../Frontend
+npm install
+```
 
-VITE_FIREBASE_API_KEY="..."
-VITE_FIREBASE_AUTH_DOMAIN="schoolsystem-eac50.firebaseapp.com"
-VITE_FIREBASE_PROJECT_ID="schoolsystem-eac50"
-VITE_FIREBASE_STORAGE_BUCKET="schoolsystem-eac50.firebasestorage.app"
-VITE_FIREBASE_MESSAGING_SENDER_ID="..."
-VITE_FIREBASE_APP_ID="..."
+---
 
+## Running the Application
+
+### Start the Backend
+```bash
+cd Backend
 npm run dev
+```
 
-Authentication flow
-User logs in with Firebase (email/password or Google).
-Frontend calls getIdToken() and stores it as idToken in:
-localStorage if “Remember me” is checked
-sessionStorage otherwise
-Frontend also stores userEmail for display.
-For all protected API calls, frontend sends:
-Authorization: Bearer <idToken>
+Backend runs on: **http://localhost:4000**
 
-Authorization: Bearer <idToken>
-Backend
-authMiddleware.ts:
-requireAuth:
-reads Authorization header
-verifies the Firebase ID token (if Firebase env vars are set)
-loads or creates a matching User in the DB
-attaches it to req.user
-if Firebase env is not configured, runs in a “demo mode” and sets a dummy user.
-requireAdmin: ensures req.user.role === "ADMIN".
-verifyToken.ts is a simple middleware for verifying Firebase tokens if needed.
+### Start the Frontend
+```bash
+cd Frontend
+npm run dev
+```
 
-Core API endpoints
-Student endpoints
-GET /api/me/grades
-Auth: requireAuth
-Query:
-year?: 1 | 2 | 3 – used for “Year 1 / Year 2 / Year 3 / All”
-subject?: subject name – used for “Subject” dropdown
+Frontend runs on: **http://localhost:5173**
 
-Frontend pages (mapped to the assignment)
-Login page (/loginpage)
+### Access API Documentation
 
-Email / Password fields
+Swagger UI: **http://localhost:4000/api-docs**
 
-Remember me checkbox
+---
 
-Login button (email/password)
+## How to Use
 
-Login with Google button
+### Login as a Student
 
-“Forgot password?” link
+1. Go to http://localhost:5173/loginpage
+2. Enter student email and password
+3. Click "Login"
 
-“Admin” option to switch to admin login view
+**What Students Can Do:**
+- View grades filtered by year (Year 1, 2, 3, or All)
+- Filter grades by subject
+- See grade details: Year, Subject, Course, Grade, Date
 
-Student “Grades” page (/grades)
+### Login as an Admin
 
-Year filters: Year 1, Year 2, Year 3, All
+1. Go to http://localhost:5173/loginpage
+2. Click "Admin" option
+3. Enter admin email and password
+4. Click "Login"
 
-Subject dropdown
+**What Admins Can Do:**
+- View all students
+- Filter by year
+- Import students from CSV file
+- View student details
+- Assign or update grades for students
+- Filter grades by year and course
 
-Table: Year / Subject / Course / Grade / Date
+---
 
-Back arrow to go back to login
 
-Top-right shows current user email + Logout
+## Testing
 
-Admin page (/adminpage)
-Back arrow to login
-Shows current admin email + Logout
-Year filters: All, Year 1, Year 2, Year 3
-Student table: Full name / Email / Personal ID / Tel / Address
-Hover behaviour: shows a “details” card with info + Edit / Delete buttons (UI only, wiring optional)
-CSV import section with “Import CSV” button
-Link/button to “Register Grades” page
+Run backend tests:
+```bash
+cd Backend
+npm test
+npm run test:coverage
+```
 
-Admin “Register Grades” page (/adminregistergrades)
-Year filters
-Subject dropdown for course selection
-Table: Student name / Grade / Date
-Editing grades in-place (depending on your implementation)
-Button to go back to “Students” admin page
+---
