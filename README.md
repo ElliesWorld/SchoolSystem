@@ -1,4 +1,4 @@
-![Tests](https://github.com/ElliesWorld/SchoolSystem/actions/workflows/test.yml/badge.svg?event=push)
+![Tests](https://github.com/ElliesWorld/SchoolSystem/actions/workflows/test.yml/badge.svg?branch=main)
 
 **Frontend**: React (Vite), TypeScript
 
