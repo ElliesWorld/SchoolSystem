@@ -17,24 +17,6 @@ const router = Router();
  *         description: A list of courses
  */
 
-// GET /api/admin/courses - Get all courses
-/*router.get(
-  "/admin/courses",
-  requireAuth,
-  requireAdmin,
-  async (req, res, next) => {
-    try {
-      const courses = await prisma.course.findMany({
-        orderBy: [{ yearOffered: "asc" }, { subject: "asc" }, { name: "asc" }],
-      });
-
-      res.json({ courses });
-    } catch (err) {
-      next(err);
-    }
-  }
-);*/
-
 router.get(
   "/admin/courses",
   requireAuth,

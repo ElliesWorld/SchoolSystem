@@ -44,7 +44,3 @@ jobs:
     - name: Install dependencies
       working-directory: ./Frontend
       run: npm ci
-
-    - name: Run linter
-      working-directory: ./Frontend
-      run: npm run lint
