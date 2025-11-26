@@ -48,7 +48,6 @@ const gradesQuerySchema = z.object({
   subject: z.string().optional(),
 });
 
-// *** ONLY ONE /me/grades ROUTE, NO verifyToken, NO requireAuth ***
 router.get(
   "/me/grades",
   requireAuth,
@@ -77,14 +76,38 @@ router.get(
   }
 );
 
-//ADMIN: /api/admin/gradeshttps://github.com/ElliesWorld/SchoolSystem.git
+/**
+ * @swagger
+ * /api/admin/grades:
+ *   get:
+ *     summary: Retrieve grades for a course
+ *     description: Retrieve all student grades for a specific course and year (admin only)
+ *     tags: [Admin - Grades]
+ *     parameters:
+ *       - in: query
+ *         name: year
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           enum: [1, 2, 3]
+ *         description: Academic year (1, 2, or 3)
+ *       - in: query
+ *         name: courseId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Course ID (e.g., "course-1")
+ *     responses:
+ *       200:
+ *         description: A list of student grades
+ */
 
 const adminGradesQuerySchema = z.object({
   year: z
     .string()
     .regex(/^[1-3]$/, "Year must be 1, 2, or 3")
     .transform((v) => Number(v)),
-  courseId: z.string(), // accept "course-1" etc.
+  courseId: z.string(),
 });
 
 router.get(
@@ -95,7 +118,6 @@ router.get(
   async (req, res, next) => {
     try {
       const { year, courseId } = (req as any).validatedQuery ?? {};
-      // year is already a number because of .transform
       const rows = await getRegisterGradesView(year, courseId);
       res.json({ rows });
     } catch (err) {
@@ -103,6 +125,50 @@ router.get(
     }
   }
 );
+
+/**
+ * @swagger
+ * /api/admin/grades:
+ *   post:
+ *     summary: Set or update a student grade
+ *     description: Create or update a grade for a student in a specific course (admin only)
+ *     tags: [Admin - Grades]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - studentId
+ *               - courseId
+ *               - grade
+ *               - year
+ *             properties:
+ *               studentId:
+ *                 type: string
+ *                 description: Student ID
+ *               courseId:
+ *                 type: string
+ *                 description: Course ID
+ *               grade:
+ *                 type: string
+ *                 enum: [A, B, C, D, E, F]
+ *                 description: Letter grade to assign
+ *               year:
+ *                 type: integer
+ *                 minimum: 1
+ *                 maximum: 3
+ *                 description: Academic year
+ *           example:
+ *             studentId: "student-123"
+ *             courseId: "course-1"
+ *             grade: "A"
+ *             year: 1
+ *     responses:
+ *       201:
+ *         description: Grade created or updated successfully
+ */
 
 const adminGradesBodySchema = z.object({
   studentId: z.string(),

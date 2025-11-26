@@ -13,6 +13,27 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
 
+/**
+ * @swagger
+ * /api/admin/students:
+ *   get:
+ *     summary: Retrieve all students
+ *     description: Retrieve a list of all students, optionally filtered by year
+ *     tags: [Admin - Students]
+ *     parameters:
+ *       - in: query
+ *         name: year
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 3
+ *         required: false
+ *         description: Filter students by year (1, 2, or 3)
+ *     responses:
+ *       200:
+ *         description: A list of students
+ */
+
 // GET /api/admin/students?year=1
 const studentsQuerySchema = z.object({
   year: z
@@ -46,6 +67,31 @@ router.get(
     }
   }
 );
+
+/**
+ * @swagger
+ * /api/admin/students/import-csv:
+ *   post:
+ *     summary: Import students from CSV
+ *     description: Bulk import or update students from a CSV file (admin only)
+ *     tags: [Admin - Students]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: CSV file containing student data
+ *     responses:
+ *       201:
+ *         description: Students imported successfully
+ *       400:
+ *         description: Invalid CSV file or format
+ */
 
 // CSV import: POST /api/admin/students/import-csv
 router.post(
