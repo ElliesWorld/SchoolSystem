@@ -5,7 +5,6 @@ import cors from "cors";
 import { env } from "./config/env";
 import gradeRoutes from "./routes/gradeRoutes";
 import adminStudentRoutes from "./routes/adminStudentRoutes";
-import courseRoutes from "./routes/courseRoutes"; //
 import { errorHandler } from "./middleware/errorHandler";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger";
@@ -14,33 +13,29 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // frontend dev URL
+    origin: "http://localhost:5173",
     credentials: false,
   })
 );
 
 app.use(express.json());
 
-// Health check
-app.get("/health", (_req, res) => {
-  res.json({ ok: true });
+// Simple debug endpoint so we know this exact server is running
+app.get("/debug-courses", (_req, res) => {
+  res.json({ msg: "Hello from THIS server.ts" });
 });
 
 // Swagger docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.get("/debug-me-grades", (_req, res) => {
-  res.json({ from: "server.ts debug route" });
-});
-
 // API routes
-app.use("/api", gradeRoutes); // /api/me/grades, /api/admin/grades
-app.use("/api", adminStudentRoutes); // /api/admin/students, /import-csv, etc.
-app.use("/api", courseRoutes); // ✅ /api/admin/courses
+app.use("/api", gradeRoutes); // 👈 /api/me/grades, /api/admin/grades, /api/admin/courses
+app.use("/api", adminStudentRoutes); // 👈 /api/admin/students, CSV import etc.
+
 // Error handler
 app.use(errorHandler);
 
 const port = Number(env.PORT ?? 4000);
 app.listen(port, () => {
-  console.log(`Server listening on http://localhost:${port}`);
+  console.log(`🚀 Server listening on http://localhost:${port}`);
 });

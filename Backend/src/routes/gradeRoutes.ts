@@ -8,37 +8,15 @@ import {
   setGrade,
 } from "../services/gradeService";
 import { requireAuth, requireAdmin } from "../middleware/authMiddleware";
+import { prisma } from "../utils/prisma";
 
 const router = Router();
 
-/**
- * @swagger
- * /api/me/grades:
- *   get:
- *     summary: Retrieve my grades
- *     description: Retrieve a list of grades for the logged-in student
- *     responses:
- *       200:
- *         description: A list of grades
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 grades:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                       grade:
- *                         type: string
- *                       year:
- *                         type: integer
- */
+console.log("✅ gradeRoutes.ts loaded");
 
-//STUDENT: GET /api/me/grades
+/**
+ * STUDENT: GET /api/me/grades
+ */
 
 const gradesQuerySchema = z.object({
   year: z
@@ -60,7 +38,6 @@ router.get(
       }
 
       const firebaseUid = user.firebaseUid ?? "demo-firebase-uid";
-
       const { year, subject } = (req as any).validatedQuery ?? {};
 
       const grades = await getStudentGrades({
@@ -77,6 +54,7 @@ router.get(
 );
 
 /**
+<<<<<<< Updated upstream
  * @swagger
  * /api/admin/grades:
  *   get:
@@ -100,6 +78,9 @@ router.get(
  *     responses:
  *       200:
  *         description: A list of student grades
+=======
+ * ADMIN: GET /api/admin/grades
+>>>>>>> Stashed changes
  */
 
 const adminGradesQuerySchema = z.object({
@@ -127,6 +108,7 @@ router.get(
 );
 
 /**
+<<<<<<< Updated upstream
  * @swagger
  * /api/admin/grades:
  *   post:
@@ -168,6 +150,9 @@ router.get(
  *     responses:
  *       201:
  *         description: Grade created or updated successfully
+=======
+ * ADMIN: POST /api/admin/grades
+>>>>>>> Stashed changes
  */
 
 const adminGradesBodySchema = z.object({
@@ -193,4 +178,31 @@ router.post(
   }
 );
 
+<<<<<<< Updated upstream
 export default router;
+=======
+/**
+ * ADMIN: GET /api/admin/courses
+ * ✅ THIS IS THE ROUTE YOUR FRONTEND IS CALLING
+ */
+
+router.get(
+  "/admin/courses",
+  requireAuth,
+  requireAdmin,
+  async (_req, res, next) => {
+    console.log("✅ /api/admin/courses handler reached");
+    try {
+      const courses = await prisma.course.findMany({
+        orderBy: [{ yearOffered: "asc" }, { subject: "asc" }, { name: "asc" }],
+      });
+
+      res.json({ courses });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+export default router;
+>>>>>>> Stashed changes

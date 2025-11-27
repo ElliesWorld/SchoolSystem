@@ -38,7 +38,7 @@ const AdminMenuPage: React.FC = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          background: "linear-gradient(#E0F2FE, #F9FAFB)", // soft off-white
+          background: "linear-gradient(#E0F2FE, #F9FAFB)",
           padding: "2rem 1rem",
         }}
       >
@@ -77,8 +77,8 @@ const AdminMenuPage: React.FC = () => {
                   border: "none",
                   background:
                     item.label === "Register Grades"
-                      ? "linear-gradient(135deg, #f97316, #fb7185)"
-                      : "linear-gradient(135deg, #e5e7eb, #f9fafb)",
+                      ? "linear-gradient(135deg, #f97316, #fb7185)" // orange/pink
+                      : "linear-gradient(135deg, #bfdbfe, #eff6ff)", // 🔵 light blue
                   color:
                     item.label === "Register Grades" ? "#ffffff" : "#111827",
                   fontSize: 16,
