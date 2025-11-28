@@ -12,8 +12,6 @@ import { prisma } from "../utils/prisma";
 
 const router = Router();
 
-console.log("✅ gradeRoutes.ts loaded");
-
 /**
  * STUDENT: GET /api/me/grades
  */
@@ -38,6 +36,7 @@ router.get(
       }
 
       const firebaseUid = user.firebaseUid ?? "demo-firebase-uid";
+
       const { year, subject } = (req as any).validatedQuery ?? {};
 
       const grades = await getStudentGrades({
@@ -54,33 +53,8 @@ router.get(
 );
 
 /**
-<<<<<<< Updated upstream
- * @swagger
- * /api/admin/grades:
- *   get:
- *     summary: Retrieve grades for a course
- *     description: Retrieve all student grades for a specific course and year (admin only)
- *     tags: [Admin - Grades]
- *     parameters:
- *       - in: query
- *         name: year
- *         required: true
- *         schema:
- *           type: integer
- *           enum: [1, 2, 3]
- *         description: Academic year (1, 2, or 3)
- *       - in: query
- *         name: courseId
- *         required: true
- *         schema:
- *           type: string
- *         description: Course ID (e.g., "course-1")
- *     responses:
- *       200:
- *         description: A list of student grades
-=======
  * ADMIN: GET /api/admin/grades
->>>>>>> Stashed changes
+ * (used by Register Grades page)
  */
 
 const adminGradesQuerySchema = z.object({
@@ -88,6 +62,7 @@ const adminGradesQuerySchema = z.object({
     .string()
     .regex(/^[1-3]$/, "Year must be 1, 2, or 3")
     .transform((v) => Number(v)),
+  // IMPORTANT: courseId is just a string like "course-1", not a UUID
   courseId: z.string(),
 });
 
@@ -108,55 +83,14 @@ router.get(
 );
 
 /**
-<<<<<<< Updated upstream
- * @swagger
- * /api/admin/grades:
- *   post:
- *     summary: Set or update a student grade
- *     description: Create or update a grade for a student in a specific course (admin only)
- *     tags: [Admin - Grades]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - studentId
- *               - courseId
- *               - grade
- *               - year
- *             properties:
- *               studentId:
- *                 type: string
- *                 description: Student ID
- *               courseId:
- *                 type: string
- *                 description: Course ID
- *               grade:
- *                 type: string
- *                 enum: [A, B, C, D, E, F]
- *                 description: Letter grade to assign
- *               year:
- *                 type: integer
- *                 minimum: 1
- *                 maximum: 3
- *                 description: Academic year
- *           example:
- *             studentId: "student-123"
- *             courseId: "course-1"
- *             grade: "A"
- *             year: 1
- *     responses:
- *       201:
- *         description: Grade created or updated successfully
-=======
  * ADMIN: POST /api/admin/grades
->>>>>>> Stashed changes
+ * (save a grade)
  */
 
 const adminGradesBodySchema = z.object({
-  studentId: z.string(),
+  // studentId comes from Prisma, so it *is* a UUID
+  studentId: z.string().uuid(),
+  // courseId is like "course-1" from your seed, so no UUID check
   courseId: z.string(),
   grade: z.enum(["A", "B", "C", "D", "E", "F"]),
   year: z.number().int().min(1).max(3),
@@ -178,12 +112,9 @@ router.post(
   }
 );
 
-<<<<<<< Updated upstream
-export default router;
-=======
 /**
  * ADMIN: GET /api/admin/courses
- * ✅ THIS IS THE ROUTE YOUR FRONTEND IS CALLING
+ * (used by Register Grades to populate the course dropdown)
  */
 
 router.get(
@@ -191,7 +122,6 @@ router.get(
   requireAuth,
   requireAdmin,
   async (_req, res, next) => {
-    console.log("✅ /api/admin/courses handler reached");
     try {
       const courses = await prisma.course.findMany({
         orderBy: [{ yearOffered: "asc" }, { subject: "asc" }, { name: "asc" }],
@@ -205,4 +135,3 @@ router.get(
 );
 
 export default router;
->>>>>>> Stashed changes

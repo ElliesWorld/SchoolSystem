@@ -8,6 +8,8 @@ import adminStudentRoutes from "./routes/adminStudentRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger";
+import courseRoutes from "./routes/courseRoutes";
+import authRoutes from "./routes/authRoutes";
 
 const app = express();
 
@@ -31,6 +33,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // API routes
 app.use("/api", gradeRoutes); // 👈 /api/me/grades, /api/admin/grades, /api/admin/courses
 app.use("/api", adminStudentRoutes); // 👈 /api/admin/students, CSV import etc.
+app.use("/api", courseRoutes);
+app.use("/api", authRoutes);
 
 // Error handler
 app.use(errorHandler);

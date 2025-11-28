@@ -1,3 +1,4 @@
+// src/pages/loginpage.tsx
 import React, { useState } from "react";
 import {
   signInWithEmailAndPassword,
@@ -6,15 +7,32 @@ import {
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth, googleProvider } from "../firebase";
-
-// NEW: google icon
 import { FcGoogle } from "react-icons/fc";
-
-// ⬇️ NEW: import your background image
 import schoolBg from "../assets/images/school-bg.webp";
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+
+  // ✅ Verify student role with backend using token + email
+  async function verifyStudent(idToken: string, email: string) {
+    const response = await fetch(`${API_BASE_URL}/api/auth/verify-student`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      console.error("verify-student failed:", body);
+      throw new Error(body.error || "Not authorized as student");
+    }
+  }
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,6 +53,9 @@ const LoginPage: React.FC = () => {
       const storage = rememberMe ? localStorage : sessionStorage;
       storage.setItem("idToken", idToken);
       storage.setItem("userEmail", userEmail);
+
+      // ✅ Verify student role
+      await verifyStudent(idToken, userEmail);
 
       // Student always goes to grades
       navigate("/grades");
@@ -58,6 +79,9 @@ const LoginPage: React.FC = () => {
       const storage = rememberMe ? localStorage : sessionStorage;
       storage.setItem("idToken", idToken);
       storage.setItem("userEmail", userEmail);
+
+      // ✅ Verify student role
+      await verifyStudent(idToken, userEmail);
 
       navigate("/grades");
     } catch (err: unknown) {
@@ -91,7 +115,6 @@ const LoginPage: React.FC = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        // ⬇️ Background image + dark overlay
         backgroundImage: `linear-gradient(rgba(10, 25, 47, 0.85), rgba(10, 25, 47, 0.9)), url(${schoolBg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -154,7 +177,6 @@ const LoginPage: React.FC = () => {
               color: "#374151",
             }}
           >
-            {/* small icon via emoji, no extra imports */}
             📧 E-mail
           </label>
           <input
@@ -293,7 +315,7 @@ const LoginPage: React.FC = () => {
             {loading ? "Logging in..." : "Login"}
           </button>
 
-          {/* GOOGLE BUTTON – styled similar to your Tailwind example */}
+          {/* GOOGLE BUTTON */}
           <button
             type="button"
             onClick={handleLoginGoogle}
@@ -355,7 +377,7 @@ const LoginPage: React.FC = () => {
               border: "none",
               background: "none",
               cursor: "pointer",
-              color: "#f97316", // orange ADMIN text
+              color: "#f97316",
               fontSize: 13,
               fontWeight: 600,
               letterSpacing: 0.5,

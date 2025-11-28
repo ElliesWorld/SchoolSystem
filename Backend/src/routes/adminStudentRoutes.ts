@@ -1,4 +1,4 @@
-// src/routes/adminStudentRoutes.ts 
+// src/routes/adminStudentRoutes.ts
 import { Router } from "express";
 import multer from "multer";
 import { parse } from "csv-parse/sync";
@@ -8,9 +8,9 @@ import { validate } from "../middleware/validate";
 import { prisma } from "../utils/prisma";
 
 const router = Router();
-const upload = multer({ 
+const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
 });
 
 /**
@@ -42,6 +42,7 @@ const studentsQuerySchema = z.object({
     .optional(),
 });
 
+// 🔹 route to list students (you already had this)
 router.get(
   "/admin/students",
   validate({ query: studentsQuerySchema }),
@@ -105,20 +106,20 @@ router.post(
 
       if (!req.file) {
         console.error("No file in request");
-        return res.status(400).json({ 
-          error: "No file uploaded. Please select a CSV file." 
+        return res.status(400).json({
+          error: "No file uploaded. Please select a CSV file.",
         });
       }
 
       // Get file content and clean it
       let content = req.file.buffer.toString("utf-8");
-      
+
       // Remove BOM if present
-      content = content.replace(/^\uFEFF/, '');
-      
+      content = content.replace(/^\uFEFF/, "");
+
       // Normalize line endings
-      content = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-      
+      content = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+
       console.log("📄 File content preview:", content.substring(0, 200));
 
       // Parse CSV with more lenient options
@@ -140,9 +141,9 @@ router.post(
         }>;
       } catch (parseError: any) {
         console.error("❌ CSV parse error:", parseError.message);
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: `CSV parsing failed: ${parseError.message}`,
-          hint: "Check that your CSV has these columns: fullName,email,personNr,phoneNr,address,year"
+          hint: "Check that your CSV has these columns: fullName,email,personNr,phoneNr,address,year",
         });
       }
 
@@ -150,16 +151,16 @@ router.post(
 
       // Validate required columns
       if (records.length === 0) {
-        return res.status(400).json({ 
-          error: "CSV file is empty or has no valid rows" 
+        return res.status(400).json({
+          error: "CSV file is empty or has no valid rows",
         });
       }
 
       const firstRecord = records[0];
       if (!firstRecord.email || !firstRecord.year) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: "CSV must have at least 'email' and 'year' columns",
-          received: Object.keys(firstRecord)
+          received: Object.keys(firstRecord),
         });
       }
 
@@ -170,7 +171,7 @@ router.post(
 
       for (let i = 0; i < records.length; i++) {
         const row = records[i];
-        
+
         try {
           // Validate required fields
           if (!row.email || !row.year) {
@@ -225,20 +226,96 @@ router.post(
         }
       }
 
-      console.log(`✅ Import complete: ${imported} imported, ${skipped} skipped`);
-      
-      res.status(imported > 0 ? 201 : 400).json({ 
-        imported, 
+      console.log(
+        `✅ Import complete: ${imported} imported, ${skipped} skipped`
+      );
+
+      res.status(imported > 0 ? 201 : 400).json({
+        imported,
         skipped,
         total: records.length,
-        errors: errors.length > 0 ? errors : undefined
+        errors: errors.length > 0 ? errors : undefined,
       });
     } catch (err: any) {
       console.error("❌ CSV import error:", err);
-      res.status(500).json({ 
+      res.status(500).json({
         error: err.message || "Failed to import CSV",
-        details: process.env.NODE_ENV !== "production" ? err.stack : undefined
+        details: process.env.NODE_ENV !== "production" ? err.stack : undefined,
       });
+    }
+  }
+);
+
+// 🔹 Schemas for PATCH / DELETE
+const studentIdParamSchema = z.object({
+  id: z.string().uuid(), // Student.id is a UUID
+});
+
+const updateStudentBodySchema = z.object({
+  personNr: z.string().optional().nullable(),
+  phoneNr: z.string().optional().nullable(),
+  address: z.string().optional().nullable(),
+  year: z.number().int().min(1).max(3).optional(),
+});
+
+// PATCH /api/admin/students/:id  -> update basic student info
+router.patch(
+  "/admin/students/:id",
+  requireAuth,
+  requireAdmin,
+  validate({ params: studentIdParamSchema, body: updateStudentBodySchema }),
+  async (req, res, next) => {
+    try {
+      const { id } = (req as any).validatedParams;
+      const body = (req as any).validatedBody as z.infer<
+        typeof updateStudentBodySchema
+      >;
+
+      const student = await prisma.student.update({
+        where: { id },
+        data: {
+          personNr: body.personNr ?? undefined,
+          phoneNr: body.phoneNr ?? undefined,
+          address: body.address ?? undefined,
+          year: body.year ?? undefined,
+        },
+        include: {
+          user: { select: { email: true } },
+        },
+      });
+
+      res.json({ student });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// DELETE /api/admin/students/:id -> delete student (and related user/grades)
+router.delete(
+  "/admin/students/:id",
+  requireAuth,
+  requireAdmin,
+  validate({ params: studentIdParamSchema }),
+  async (req, res, next) => {
+    try {
+      const { id } = (req as any).validatedParams;
+
+      // Remove grades first to satisfy FK constraints
+      await prisma.grade.deleteMany({ where: { studentId: id } });
+
+      // Delete student, then the linked user
+      const student = await prisma.student.delete({
+        where: { id },
+      });
+
+      await prisma.user.delete({
+        where: { id: student.userId },
+      });
+
+      res.status(204).send(); // No content
+    } catch (err) {
+      next(err);
     }
   }
 );
