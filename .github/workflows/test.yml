@@ -2,7 +2,7 @@ name: Run Tests
 
 on:
   push:
-    branches: [ main, 10-actions ]
+    branches: [ main, 28-updates]
   pull_request:
     branches: [ main ]
 

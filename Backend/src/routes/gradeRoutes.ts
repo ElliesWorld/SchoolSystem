@@ -96,7 +96,7 @@ router.get(
  *         required: true
  *         schema:
  *           type: string
- *         description: Course ID (e.g., "course-1")
+ *         description: Course ID (e.g., "550e8400-e29b-41d4-a716-446655440001")
  *     responses:
  *       200:
  *         description: A list of student grades
