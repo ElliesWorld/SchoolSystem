@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 declare global {
   // allow global `var` in dev (avoid multiple client instances with hot reload)
-  // eslint-disable-next-line no-var
+   
   var prisma: PrismaClient | undefined;
 }
 

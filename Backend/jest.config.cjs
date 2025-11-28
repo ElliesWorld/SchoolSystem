@@ -21,4 +21,5 @@ module.exports = {
       statements: 70,
     },
   },
+   silent: true, 
 };
